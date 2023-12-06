@@ -1,5 +1,8 @@
 package ru.sumarokov.task_management_system.entity;
 
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import ru.sumarokov.task_management_system.helper.Priority;
 import ru.sumarokov.task_management_system.helper.Status;
 
@@ -10,7 +13,11 @@ public class Task {
     private String description;
     private Status status;
     private Priority priority;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author", nullable = false)
     private User author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "executor", nullable = false)
     private User executor;
 
     public Long getId() {

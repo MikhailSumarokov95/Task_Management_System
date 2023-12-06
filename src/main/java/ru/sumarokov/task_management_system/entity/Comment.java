@@ -1,10 +1,20 @@
 package ru.sumarokov.task_management_system.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "comment")
 public class Comment {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author", nullable = false)
     private User author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task", nullable = false)
     private Task task;
 
     public Long getId() {
