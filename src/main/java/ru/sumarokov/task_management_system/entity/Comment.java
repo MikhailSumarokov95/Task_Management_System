@@ -11,10 +11,10 @@ public class Comment {
     private Long id;
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task", nullable = false)
+    @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
     public Long getId() {

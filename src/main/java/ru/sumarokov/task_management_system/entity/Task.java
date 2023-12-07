@@ -1,23 +1,27 @@
 package ru.sumarokov.task_management_system.entity;
 
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import ru.sumarokov.task_management_system.helper.Priority;
 import ru.sumarokov.task_management_system.helper.Status;
 
+@Entity
+@Table(name = "task")
 public class Task {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;
+    @Enumerated(EnumType.STRING)
     private Status status;
+    @Enumerated(EnumType.STRING)
     private Priority priority;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "executor", nullable = false)
+    @JoinColumn(name = "executor_id", nullable = false)
     private User executor;
 
     public Long getId() {
