@@ -41,11 +41,14 @@ public class TaskService {
                 .orElseThrow(() -> new EntityNotFoundException(Task.class, taskId));
     }
 
-    public void saveTask(Task task, Long userId) {
+    public Task saveTask(Task task, User user) {
         if (task.getId() != null) {
-            checkWhetherTaskCanBeChanged(task.getId(), userId);
+            checkWhetherTaskCanBeChanged(task.getId(), user.getId());
         }
-        taskRepository.save(task);
+        else {
+            task.setAuthor(user);
+        }
+        return taskRepository.save(task);
     }
 
     public void deleteTask(Long taskId, Long userId) {
@@ -53,7 +56,7 @@ public class TaskService {
         taskRepository.deleteById(taskId);
     }
 
-    public void setTaskExecutor(Long taskId, Long userId, Long executorId) {
+    public Task setTaskExecutor(Long taskId, Long userId, Long executorId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException(Task.class, taskId));
         if (!task.getAuthor().getId().equals(userId)) {
@@ -62,17 +65,17 @@ public class TaskService {
         User executor = userRepository.findById(executorId)
                 .orElseThrow(() -> new EntityNotFoundException(User.class, taskId));
         task.setExecutor(executor);
-        taskRepository.save(task);
+        return taskRepository.save(task);
     }
 
-    public void setTaskStatus(Long taskId, Status status, Long userId) {
+    public Task setTaskStatus(Long taskId, Status status, Long userId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException(Task.class, taskId));
         if (!task.getExecutor().getId().equals(userId)) {
             throw new AccessDeniedException("Только исполнитель задачи может менять её статус");
         }
         task.setStatus(status);
-        taskRepository.save(task);
+        return taskRepository.save(task);
     }
 
     private void checkWhetherTaskCanBeChanged(Long taskId, Long userId) {

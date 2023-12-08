@@ -1,39 +1,27 @@
-package ru.sumarokov.task_management_system.entity;
+package ru.sumarokov.task_management_system.dto;
 
-import jakarta.persistence.*;
+import ru.sumarokov.task_management_system.entity.Task;
+import ru.sumarokov.task_management_system.entity.User;
 import ru.sumarokov.task_management_system.helper.Priority;
 import ru.sumarokov.task_management_system.helper.Status;
 
-@Entity
-@Table(name = "task")
-public class Task {
+public class TaskDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;
-    @Enumerated(EnumType.STRING)
     private Status status;
-    @Enumerated(EnumType.STRING)
     private Priority priority;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
     private User author;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "executor_id", nullable = false)
     private User executor;
 
-    public Task() {
-    }
-
-    public Task(Long id,
-                String title,
-                String description,
-                Status status,
-                Priority priority,
-                User author,
-                User executor) {
+    public TaskDto(Long id,
+                   String title,
+                   String description,
+                   Status status,
+                   Priority priority,
+                   User author,
+                   User executor) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -97,5 +85,19 @@ public class Task {
 
     public void setExecutor(User executor) {
         this.executor = executor;
+    }
+
+    public Task toEntity() {
+        return new Task(id, title, description, status, priority, author, executor);
+    }
+
+    public static TaskDto toDto(Task task) {
+        return new TaskDto(task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getPriority(),
+                task.getAuthor(),
+                task.getExecutor());
     }
 }

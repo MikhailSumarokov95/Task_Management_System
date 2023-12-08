@@ -1,26 +1,17 @@
-package ru.sumarokov.task_management_system.entity;
+package ru.sumarokov.task_management_system.dto;
 
-import jakarta.persistence.*;
+import ru.sumarokov.task_management_system.entity.Comment;
+import ru.sumarokov.task_management_system.entity.Task;
+import ru.sumarokov.task_management_system.entity.User;
 
-@Entity
-@Table(name = "comment")
-public class Comment {
+public class CommentDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
     private User author;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
-    public Comment() {
-    }
-
-    public Comment(Long id, String content, User author, Task task) {
+    public CommentDto(Long id, String content, User author, Task task) {
         this.id = id;
         this.content = content;
         this.author = author;
@@ -57,5 +48,16 @@ public class Comment {
 
     public void setTask(Task task) {
         this.task = task;
+    }
+
+    public Comment toEntity() {
+        return new Comment(id, content, author, task);
+    }
+
+    public static CommentDto toDto(Comment comment) {
+        return new CommentDto(comment.getId(),
+                comment.getContent(),
+                comment.getAuthor(),
+                comment.getTask());
     }
 }
