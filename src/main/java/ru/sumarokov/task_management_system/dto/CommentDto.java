@@ -1,5 +1,7 @@
 package ru.sumarokov.task_management_system.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import ru.sumarokov.task_management_system.entity.Comment;
 import ru.sumarokov.task_management_system.entity.Task;
 import ru.sumarokov.task_management_system.entity.User;
@@ -7,6 +9,8 @@ import ru.sumarokov.task_management_system.entity.User;
 public class CommentDto {
 
     private Long id;
+    @NotEmpty(message = "Поле \"Описание\" должно быть заполнено")
+    @Size(min = 0, max = 1024, message = "Поле \"Содержание\" должно быть длиной от 0 до 1024 символов")
     private String content;
     private User author;
     private Task task;

@@ -1,5 +1,8 @@
 package ru.sumarokov.task_management_system.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import ru.sumarokov.task_management_system.entity.Task;
 import ru.sumarokov.task_management_system.entity.User;
 import ru.sumarokov.task_management_system.helper.Priority;
@@ -8,10 +11,17 @@ import ru.sumarokov.task_management_system.helper.Status;
 public class TaskDto {
 
     private Long id;
+    @NotEmpty(message = "Поле \"Заголовок\" должно быть заполнено")
+    @Size(min = 0, max = 64, message = "Поле \"Заголовок\" должно быть длиной от 0 до 64 символов")
     private String title;
+    @NotEmpty(message = "Поле \"Описание\" должно быть заполнено")
+    @Size(min = 0, max = 1024, message = "Поле \"Описание\" должно быть длиной от 0 до 1024 символов")
     private String description;
+    @NotNull(message = "Поле \"Статус\" должно быть заполнено")
     private Status status;
+    @NotNull(message = "Поле \"Приоритет\" должно быть заполнено")
     private Priority priority;
+    @NotNull(message = "Поле \"Автор\" должно быть заполнено")
     private User author;
     private User executor;
 
