@@ -1,5 +1,6 @@
 package ru.sumarokov.task_management_system.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class CommentController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/task/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "?taskId={taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CommentDto>> getTaskComments(@PathVariable Long taskId) {
         List<CommentDto> commentsDto = commentService.getTaskComments(taskId)
                 .stream()
@@ -46,7 +47,7 @@ public class CommentController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> createComment(Principal principal,
-                                              @RequestBody CommentDto commentDto) {
+                                              @RequestBody @Valid CommentDto commentDto) {
         User user = userService.getUser(principal);
         Comment commentCreated = commentService.saveComment(commentDto.toEntity(), user);
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -58,7 +59,7 @@ public class CommentController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> updateComment(Principal principal,
-                                                    @RequestBody CommentDto commentDto) {
+                                                    @RequestBody @Valid CommentDto commentDto) {
         User user = userService.getUser(principal);
         Comment commentUpdated = commentService.saveComment(commentDto.toEntity(), user);
         return ResponseEntity.accepted().body(CommentDto.toDto(commentUpdated));

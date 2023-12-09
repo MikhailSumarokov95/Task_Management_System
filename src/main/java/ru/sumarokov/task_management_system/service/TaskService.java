@@ -28,12 +28,8 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public List<Task> getAuthorTasks(Long authorId) {
-        return taskRepository.findByAuthorId(authorId);
-    }
-
-    public List<Task> getExecutorTasks(Long executorId) {
-        return taskRepository.findByExecutorId(executorId);
+    public List<Task> getTasks(Long authorId, Long executorId) {
+        return taskRepository.findByExecutorIdAndExecutorId(authorId, executorId);
     }
 
     public Task getTask(Long taskId) {
@@ -44,8 +40,7 @@ public class TaskService {
     public Task saveTask(Task task, User user) {
         if (task.getId() != null) {
             checkWhetherTaskCanBeChanged(task.getId(), user.getId());
-        }
-        else {
+        } else {
             task.setAuthor(user);
         }
         return taskRepository.save(task);

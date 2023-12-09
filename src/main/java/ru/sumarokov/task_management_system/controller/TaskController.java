@@ -1,11 +1,13 @@
 package ru.sumarokov.task_management_system.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.sumarokov.task_management_system.dto.TaskDto;
+import ru.sumarokov.task_management_system.dto.UserDto;
 import ru.sumarokov.task_management_system.entity.Task;
 import ru.sumarokov.task_management_system.entity.User;
 import ru.sumarokov.task_management_system.helper.Status;
@@ -39,18 +41,10 @@ public class TaskController {
         return ResponseEntity.ok().body(tasksDto);
     }
 
-    @GetMapping(path = "/author/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TaskDto>> getAuthorTasks(@PathVariable Long authorId) {
-        List<TaskDto> tasksDto = taskService.getAuthorTasks(authorId)
-                .stream()
-                .map(TaskDto::toDto)
-                .toList();
-        return ResponseEntity.ok().body(tasksDto);
-    }
-
-    @GetMapping(path = "/executor/{executorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TaskDto>> getExecutorTasks(@PathVariable Long executorId) {
-        List<TaskDto> tasksDto = taskService.getExecutorTasks(executorId)
+    @GetMapping(path = "?authorId={authorId}&executorId={executorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TaskDto>> getAuthorTasks(@RequestParam(required = false, value = "authorId") Long authorId,
+                                                        @RequestParam(required = false, value = "executorId") Long executorId) {
+        List<TaskDto> tasksDto = taskService.getTasks(authorId, executorId)
                 .stream()
                 .map(TaskDto::toDto)
                 .toList();
@@ -65,7 +59,8 @@ public class TaskController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDto> createTask(Principal principal,
-                                              @RequestBody TaskDto taskDto) {
+                                              @RequestBody @Valid TaskDto taskDto) {
+        System.out.println(principal.getName());
         User user = userService.getUser(principal);
         Task taskCreated = taskService.saveTask(taskDto.toEntity(), user);
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -77,7 +72,7 @@ public class TaskController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDto> updateTask(Principal principal,
-                                              @RequestBody TaskDto taskDto) {
+                                              @RequestBody @Valid TaskDto taskDto) {
         User user = userService.getUser(principal);
         Task taskUpdated = taskService.saveTask(taskDto.toEntity(), user);
         return ResponseEntity.accepted().body(TaskDto.toDto(taskUpdated));
@@ -91,19 +86,19 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/task/{taskId}/set-executor")
+    @PutMapping("/{taskId}/set-executor")
     public ResponseEntity<TaskDto> setExecutor(Principal principal,
                                                @PathVariable Long taskId,
-                                               @RequestBody User executor) {
+                                               @RequestBody @Valid UserDto executor) {
         User user = userService.getUser(principal);
         Task taskUpdated = taskService.setTaskExecutor(taskId, user.getId(), executor.getId());
         return ResponseEntity.accepted().body(TaskDto.toDto(taskUpdated));
     }
 
-    @PutMapping("/task/{taskId}/set-status")
+    @PutMapping("/{taskId}/set-status")
     public ResponseEntity<TaskDto> setStatus(Principal principal,
                                              @PathVariable Long taskId,
-                                             @RequestBody Status status) {
+                                             @RequestBody @Valid Status status) {
         User user = userService.getUser(principal);
         Task taskUpdated = taskService.setTaskStatus(taskId, status, user.getId());
         return ResponseEntity.accepted().body(TaskDto.toDto(taskUpdated));
