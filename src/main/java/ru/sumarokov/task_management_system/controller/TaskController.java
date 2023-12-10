@@ -40,17 +40,6 @@ public class TaskController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Gets all task", tags = "task")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Found the tasks",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = TaskController.class)))
-                    })
-    })
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getAllTasks() {
         List<TaskDto> tasksDto = taskService.getAllTasks()
@@ -88,6 +77,16 @@ public class TaskController {
         return ResponseEntity.created(uri).body(TaskDto.toDto(taskCreated));
     }
 
+    @Operation(summary = "Update task", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task updated", content = {
+                    @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = TaskDto.class)))
+            }),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDto> updateTask(Principal principal,
                                               @RequestBody @Valid TaskDto taskDto) {
