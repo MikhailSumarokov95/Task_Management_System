@@ -1,5 +1,12 @@
 package ru.sumarokov.task_management_system.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,8 +25,9 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
-@RestController
+@RestController(value = "/task")
 @RequestMapping("/task")
+@Tag(name = "task", description = "The task API")
 public class TaskController {
 
     private final TaskService taskService;
@@ -32,6 +40,17 @@ public class TaskController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Gets all task", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Found the tasks",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = TaskController.class)))
+                    })
+    })
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getAllTasks() {
         List<TaskDto> tasksDto = taskService.getAllTasks()
@@ -60,7 +79,6 @@ public class TaskController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDto> createTask(Principal principal,
                                               @RequestBody @Valid TaskDto taskDto) {
-        System.out.println(principal.getName());
         User user = userService.getUser(principal);
         Task taskCreated = taskService.saveTask(taskDto.toEntity(), user);
         URI uri = URI.create(ServletUriComponentsBuilder
