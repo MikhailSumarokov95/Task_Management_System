@@ -1,7 +1,5 @@
 package ru.sumarokov.task_management_system.controller.auth;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
 
     private final AuthenticationService service;
 

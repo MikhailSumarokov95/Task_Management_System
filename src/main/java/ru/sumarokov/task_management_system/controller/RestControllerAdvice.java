@@ -1,7 +1,5 @@
 package ru.sumarokov.task_management_system.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,7 +14,6 @@ import java.io.IOException;
 
 @ControllerAdvice
 public class RestControllerAdvice {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestControllerAdvice.class);
 
     @ExceptionHandler({EntityNotFoundException.class})
     protected ResponseEntity<Object> handleEntityNotFoundEx(Exception ex, WebRequest request) {
