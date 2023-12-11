@@ -1,5 +1,8 @@
 package ru.sumarokov.task_management_system.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,6 +33,13 @@ public class CommentController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Get task comments", tags = "comment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comments received"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @GetMapping(path = "?taskId={taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CommentDto>> getTaskComments(@PathVariable Long taskId) {
         List<CommentDto> commentsDto = commentService.getTaskComments(taskId)
@@ -39,12 +49,26 @@ public class CommentController {
         return ResponseEntity.ok().body(commentsDto);
     }
 
+    @Operation(summary = "Get comment", tags = "comment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comment received"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @GetMapping(path = "/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> getComment(@PathVariable Long commentId) {
         CommentDto commentDto = CommentDto.toDto(commentService.getComment(commentId));
         return ResponseEntity.ok().body(commentDto);
     }
 
+    @Operation(summary = "Create comment", tags = "comment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comments created"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> createComment(Principal principal,
                                               @RequestBody @Valid CommentDto commentDto) {
@@ -57,6 +81,13 @@ public class CommentController {
         return ResponseEntity.created(uri).body(CommentDto.toDto(commentCreated));
     }
 
+    @Operation(summary = "Update comment", tags = "comment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Comments updated"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> updateComment(Principal principal,
                                                     @RequestBody @Valid CommentDto commentDto) {
@@ -65,6 +96,13 @@ public class CommentController {
         return ResponseEntity.accepted().body(CommentDto.toDto(commentUpdated));
     }
 
+    @Operation(summary = "Delete comment", tags = "comment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Comments deleted"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(Principal principal,
                                               @PathVariable Long commentId) {

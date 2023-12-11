@@ -1,9 +1,6 @@
 package ru.sumarokov.task_management_system.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +37,13 @@ public class TaskController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Get all tasks", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tasks received"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getAllTasks() {
         List<TaskDto> tasksDto = taskService.getAllTasks()
@@ -49,9 +53,16 @@ public class TaskController {
         return ResponseEntity.ok().body(tasksDto);
     }
 
+    @Operation(summary = "Get author and executor tasks", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tasks received"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @GetMapping(path = "?authorId={authorId}&executorId={executorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TaskDto>> getAuthorTasks(@RequestParam(required = false, value = "authorId") Long authorId,
-                                                        @RequestParam(required = false, value = "executorId") Long executorId) {
+    public ResponseEntity<List<TaskDto>> getAuthorAndExecutorTasks(@RequestParam(required = false, value = "authorId") Long authorId,
+                                                                   @RequestParam(required = false, value = "executorId") Long executorId) {
         List<TaskDto> tasksDto = taskService.getTasks(authorId, executorId)
                 .stream()
                 .map(TaskDto::toDto)
@@ -59,12 +70,26 @@ public class TaskController {
         return ResponseEntity.ok().body(tasksDto);
     }
 
+    @Operation(summary = "Get task", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task received"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @GetMapping(path = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDto> getTask(@PathVariable Long taskId) {
         TaskDto taskDto = TaskDto.toDto(taskService.getTask(taskId));
         return (ResponseEntity.ok().body(taskDto));
     }
 
+    @Operation(summary = "Create task", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Task created"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDto> createTask(Principal principal,
                                               @RequestBody @Valid TaskDto taskDto) {
@@ -79,10 +104,7 @@ public class TaskController {
 
     @Operation(summary = "Update task", tags = "task")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task updated", content = {
-                    @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = TaskDto.class)))
-            }),
+            @ApiResponse(responseCode = "202", description = "Task updated"),
             @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
@@ -95,6 +117,13 @@ public class TaskController {
         return ResponseEntity.accepted().body(TaskDto.toDto(taskUpdated));
     }
 
+    @Operation(summary = "Delete task", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Task deleted"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> deleteTask(Principal principal,
                                            @PathVariable Long taskId) {
@@ -103,6 +132,13 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Set executor", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Executor appointed"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @PutMapping("/{taskId}/set-executor")
     public ResponseEntity<TaskDto> setExecutor(Principal principal,
                                                @PathVariable Long taskId,
@@ -112,6 +148,13 @@ public class TaskController {
         return ResponseEntity.accepted().body(TaskDto.toDto(taskUpdated));
     }
 
+    @Operation(summary = "Set status", tags = "task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Status changed"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
+    })
     @PutMapping("/{taskId}/set-status")
     public ResponseEntity<TaskDto> setStatus(Principal principal,
                                              @PathVariable Long taskId,
