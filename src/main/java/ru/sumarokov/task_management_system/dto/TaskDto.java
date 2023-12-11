@@ -22,23 +22,23 @@ public class TaskDto {
     @NotNull(message = "Поле \"Приоритет\" должно быть заполнено")
     private Priority priority;
     @NotNull(message = "Поле \"Автор\" должно быть заполнено")
-    private User author;
-    private User executor;
+    private UserDto authorDto;
+    private UserDto executorDto;
 
     public TaskDto(Long id,
                    String title,
                    String description,
                    Status status,
                    Priority priority,
-                   User author,
-                   User executor) {
+                   UserDto authorDto,
+                   UserDto executorDto) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.priority = priority;
-        this.author = author;
-        this.executor = executor;
+        this.authorDto = authorDto;
+        this.executorDto = executorDto;
     }
 
     public Long getId() {
@@ -81,24 +81,24 @@ public class TaskDto {
         this.priority = priority;
     }
 
-    public User getAuthor() {
-        return author;
+    public UserDto getAuthor() {
+        return authorDto;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setAuthor(UserDto authorDto) {
+        this.authorDto = authorDto;
     }
 
-    public User getExecutor() {
-        return executor;
+    public UserDto getExecutor() {
+        return executorDto;
     }
 
-    public void setExecutor(User executor) {
-        this.executor = executor;
+    public void setExecutor(UserDto executor) {
+        this.executorDto = executorDto;
     }
 
     public Task toEntity() {
-        return new Task(id, title, description, status, priority, author, executor);
+        return new Task(id, title, description, status, priority, authorDto.toEntity(), executorDto.toEntity());
     }
 
     public static TaskDto toDto(Task task) {
@@ -107,7 +107,7 @@ public class TaskDto {
                 task.getDescription(),
                 task.getStatus(),
                 task.getPriority(),
-                task.getAuthor(),
-                task.getExecutor());
+                UserDto.toDto(task.getAuthor()),
+                UserDto.toDto(task.getExecutor()));
     }
 }

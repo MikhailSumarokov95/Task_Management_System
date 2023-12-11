@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,13 @@ import ru.sumarokov.task_management_system.entity.User;
 import ru.sumarokov.task_management_system.helper.Status;
 import ru.sumarokov.task_management_system.service.TaskService;
 import ru.sumarokov.task_management_system.service.UserService;
+import org.springframework.data.domain.PageRequest;
 
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
-@RestController(value = "/task")
+@RestController()
 @RequestMapping("/task")
 @Tag(name = "task", description = "The task API")
 public class TaskController {
@@ -53,17 +55,20 @@ public class TaskController {
         return ResponseEntity.ok().body(tasksDto);
     }
 
-    @Operation(summary = "Get author and executor tasks", tags = "task")
+    @Operation(summary = "Receive a task with a filter by author or performer using pagination (if the wound filter parameters are null, then they will not be used for filtering)", tags = "task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tasks received"),
             @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
     })
-    @GetMapping(path = "?authorId={authorId}&executorId={executorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/getTaskWithFilter",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getAuthorAndExecutorTasks(@RequestParam(required = false, value = "authorId") Long authorId,
-                                                                   @RequestParam(required = false, value = "executorId") Long executorId) {
-        List<TaskDto> tasksDto = taskService.getTasks(authorId, executorId)
+                                                                   @RequestParam(required = false, value = "executorId") Long executorId,
+                                                                   @RequestParam(required = false, value = "page") @NotNull Integer page,
+                                                                   @RequestParam(required = false, value = "size") @NotNull Integer size) {
+        List<TaskDto> tasksDto = taskService.getTasks(authorId, executorId, PageRequest.of(page, size))
                 .stream()
                 .map(TaskDto::toDto)
                 .toList();

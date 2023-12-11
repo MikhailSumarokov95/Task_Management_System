@@ -1,7 +1,9 @@
 package ru.sumarokov.task_management_system.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import ru.sumarokov.task_management_system.entity.Task;
 import ru.sumarokov.task_management_system.entity.User;
@@ -28,8 +30,8 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public List<Task> getTasks(Long authorId, Long executorId) {
-        return taskRepository.findByExecutorIdAndExecutorId(authorId, executorId);
+    public List<Task> getTasks(Long authorId, Long executorId, PageRequest pageRequest ) {
+        return taskRepository.findByExecutorIdAndExecutorId(authorId, executorId, pageRequest);
     }
 
     public Task getTask(Long taskId) {

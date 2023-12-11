@@ -1,6 +1,7 @@
 package ru.sumarokov.task_management_system.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import ru.sumarokov.task_management_system.entity.Comment;
 import ru.sumarokov.task_management_system.entity.Task;
@@ -12,14 +13,16 @@ public class CommentDto {
     @NotEmpty(message = "Поле \"Описание\" должно быть заполнено")
     @Size(min = 0, max = 1024, message = "Поле \"Содержание\" должно быть длиной от 0 до 1024 символов")
     private String content;
-    private User author;
-    private Task task;
+    @NotNull(message = "Поле \"Автор\" должно быть заполнено")
+    private UserDto authorDto;
+    @NotNull(message = "Поле \"Задача\" должно быть заполнено")
+    private TaskDto taskDto;
 
-    public CommentDto(Long id, String content, User author, Task task) {
+    public CommentDto(Long id, String content, UserDto authorDto, TaskDto taskDto) {
         this.id = id;
         this.content = content;
-        this.author = author;
-        this.task = task;
+        this.authorDto = authorDto;
+        this.taskDto = taskDto;
     }
 
     public Long getId() {
@@ -38,30 +41,30 @@ public class CommentDto {
         this.content = content;
     }
 
-    public User getAuthor() {
-        return author;
+    public UserDto getAuthor() {
+        return authorDto;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setAuthor(UserDto author) {
+        this.authorDto = authorDto;
     }
 
-    public Task getTask() {
-        return task;
+    public TaskDto getTask() {
+        return taskDto;
     }
 
-    public void setTask(Task task) {
-        this.task = task;
+    public void setTask(TaskDto taskDto) {
+        this.taskDto = taskDto;
     }
 
     public Comment toEntity() {
-        return new Comment(id, content, author, task);
+        return new Comment(id, content, authorDto.toEntity(), taskDto.toEntity());
     }
 
     public static CommentDto toDto(Comment comment) {
         return new CommentDto(comment.getId(),
                 comment.getContent(),
-                comment.getAuthor(),
-                comment.getTask());
+                UserDto.toDto(comment.getAuthor()),
+                TaskDto.toDto(comment.getTask()));
     }
 }
