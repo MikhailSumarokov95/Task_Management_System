@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import ru.sumarokov.task_management_system.entity.Task;
-import ru.sumarokov.task_management_system.entity.User;
 import ru.sumarokov.task_management_system.helper.Priority;
 import ru.sumarokov.task_management_system.helper.Status;
 

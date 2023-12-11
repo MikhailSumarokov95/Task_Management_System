@@ -1,6 +1,7 @@
 package ru.sumarokov.task_management_system.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import ru.sumarokov.task_management_system.entity.Comment;
@@ -20,8 +21,8 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public List<Comment> getTaskComments(Long taskId) {
-        return commentRepository.findByTaskId(taskId);
+    public List<Comment> getTaskComments(Long taskId, PageRequest page) {
+        return commentRepository.findByTaskId(taskId, page);
     }
 
     public Comment getComment(Long commentId) {

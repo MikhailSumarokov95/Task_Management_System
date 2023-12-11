@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.sumarokov.task_management_system.dto.TokenDto;
-import ru.sumarokov.task_management_system.dto.UserDto;
+import ru.sumarokov.task_management_system.dto.UserInfoDto;
 import ru.sumarokov.task_management_system.service.AuthenticationService;
 
 @RestController
@@ -26,23 +26,23 @@ public class AuthenticationController {
         this.service = service;
     }
 
-    @Operation(summary = "Register", tags = "task")
+    @Operation(summary = "Register", tags = "auth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User registered"),
     })
     @PostMapping("/register")
-    public ResponseEntity<TokenDto> register(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(service.register(userDto));
+    public ResponseEntity<TokenDto> register(@RequestBody UserInfoDto userInfoDto) {
+        return ResponseEntity.ok(service.register(userInfoDto));
     }
 
-    @Operation(summary = "Authenticate", tags = "task")
+    @Operation(summary = "Authenticate", tags = "auth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User authenticated"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
     })
     @PostMapping("/authenticate")
-    public ResponseEntity<TokenDto> authenticate(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(service.authenticate(userDto));
+    public ResponseEntity<TokenDto> authenticate(@RequestBody UserInfoDto userInfoDto) {
+        return ResponseEntity.ok(service.authenticate(userInfoDto));
     }
 }

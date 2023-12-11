@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +43,11 @@ public class CommentController {
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
     })
-    @GetMapping(path = "?taskId={taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CommentDto>> getTaskComments(@PathVariable Long taskId) {
-        List<CommentDto> commentsDto = commentService.getTaskComments(taskId)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CommentDto>> getTaskComments(@RequestParam(value = "taskId") Long taskId,
+                                                            @RequestParam(value = "page") Integer page,
+                                                            @RequestParam(value = "size") Integer size) {
+        List<CommentDto> commentsDto = commentService.getTaskComments(taskId,  PageRequest.of(page, size))
                 .stream()
                 .map(CommentDto::toDto)
                 .toList();
@@ -73,7 +76,7 @@ public class CommentController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDto> createComment(Principal principal,
-                                              @RequestBody @Valid CommentDto commentDto) {
+                                                    @RequestBody @Valid CommentDto commentDto) {
         User user = userService.getUser(principal);
         Comment commentCreated = commentService.saveComment(commentDto.toEntity(), user);
         URI uri = URI.create(ServletUriComponentsBuilder

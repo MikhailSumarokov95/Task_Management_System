@@ -4,8 +4,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import ru.sumarokov.task_management_system.entity.Comment;
-import ru.sumarokov.task_management_system.entity.Task;
-import ru.sumarokov.task_management_system.entity.User;
 
 public class CommentDto {
 

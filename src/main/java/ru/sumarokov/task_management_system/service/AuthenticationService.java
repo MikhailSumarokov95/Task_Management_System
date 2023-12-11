@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.sumarokov.task_management_system.config.JwtService;
 import ru.sumarokov.task_management_system.dto.TokenDto;
-import ru.sumarokov.task_management_system.dto.UserDto;
+import ru.sumarokov.task_management_system.dto.UserInfoDto;
 import ru.sumarokov.task_management_system.entity.User;
 import ru.sumarokov.task_management_system.exception.EntityNotFoundException;
 import ru.sumarokov.task_management_system.repository.UserRepository;
@@ -31,24 +31,24 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public TokenDto register(UserDto userDto) {
-        if (userRepository.existsByEmail(userDto.getEmail())) {
+    public TokenDto register(UserInfoDto userInfoDto) {
+        if (userRepository.existsByEmail(userInfoDto.getEmail())) {
             throw new IllegalArgumentException("User is already registered");
-        };
+        }
         User user = new User();
-        user.setEmail(userDto.getEmail());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setEmail(userInfoDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userInfoDto.getPassword()));
         userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
         return new TokenDto(jwtToken);
     }
 
-    public TokenDto authenticate(UserDto userDto) {
+    public TokenDto authenticate(UserInfoDto userInfoDto) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDto.getEmail(), userDto.getPassword())
+                new UsernamePasswordAuthenticationToken(userInfoDto.getEmail(), userInfoDto.getPassword())
         );
-        User user = userRepository.findByEmail(userDto.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException(User.class, userDto.getEmail()));
+        User user = userRepository.findByEmail(userInfoDto.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException(User.class, userInfoDto.getEmail()));
         String jwtToken = jwtService.generateToken(user);
         return new TokenDto(jwtToken);
     }
