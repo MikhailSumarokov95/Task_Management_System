@@ -1,4 +1,4 @@
-package ru.sumarokov.task_management_system.controller.auth;
+package ru.sumarokov.task_management_system.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.sumarokov.task_management_system.dto.TokenDto;
+import ru.sumarokov.task_management_system.dto.UserDto;
+import ru.sumarokov.task_management_system.service.AuthenticationService;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,12 +22,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(service.register(request));
+    public ResponseEntity<TokenDto> register(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(service.register(userDto));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(service.authenticate(request));
+    public ResponseEntity<TokenDto> authenticate(@RequestBody UserDto userDto) {
+        return ResponseEntity.ok(service.authenticate(userDto));
     }
 }

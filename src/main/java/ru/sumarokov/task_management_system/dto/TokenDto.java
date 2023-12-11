@@ -1,10 +1,10 @@
-package ru.sumarokov.task_management_system.controller.auth;
+package ru.sumarokov.task_management_system.dto;
 
-public class AuthenticationResponse {
+public class TokenDto {
 
     private String token;
 
-    public AuthenticationResponse(String token) {
+    public TokenDto(String token) {
         this.token = token;
     }
 
