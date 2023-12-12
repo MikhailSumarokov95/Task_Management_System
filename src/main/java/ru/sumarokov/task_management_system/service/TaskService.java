@@ -25,8 +25,11 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    public List<Task> getTasks(Long authorId, Long executorId, PageRequest pageRequest ) {
-        return taskRepository.findByAuthorIdAndExecutorId(authorId, executorId, pageRequest);
+    public List<Task> getTasks(Long authorId, Long executorId, PageRequest pageRequest) {
+        return taskRepository.findByAuthorIdAndExecutorId(authorId,
+                executorId,
+                pageRequest.getPageSize(),
+                pageRequest.getPageSize() * pageRequest.getPageNumber());
     }
 
     public Task getTask(Long taskId) {

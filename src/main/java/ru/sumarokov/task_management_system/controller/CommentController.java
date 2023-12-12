@@ -47,7 +47,7 @@ public class CommentController {
     public ResponseEntity<List<CommentDto>> getTaskComments(@RequestParam(value = "taskId") Long taskId,
                                                             @RequestParam(value = "page") Integer page,
                                                             @RequestParam(value = "size") Integer size) {
-        List<CommentDto> commentsDto = commentService.getTaskComments(taskId,  PageRequest.of(page, size))
+        List<CommentDto> commentsDto = commentService.getTaskComments(taskId, PageRequest.of(page, size))
                 .stream()
                 .map(CommentDto::toDto)
                 .toList();
@@ -99,7 +99,7 @@ public class CommentController {
     public ResponseEntity<CommentDto> updateComment(Principal principal,
                                                     @RequestBody @Valid CommentDto commentDto) {
         User user = userService.getUser(principal);
-        Comment commentUpdated = commentService.updateComment(commentDto.toEntity(), user);
+        Comment commentUpdated = commentService.updateComment(commentDto.toEntity(), user.getId());
         return ResponseEntity.accepted().body(CommentDto.toDto(commentUpdated));
     }
 

@@ -22,13 +22,14 @@ public class CommentService {
     }
 
     public List<Comment> getTaskComments(Long taskId, PageRequest page) {
-        return commentRepository.findByTaskId(taskId, page);
+        return commentRepository.findByTaskId(taskId, page.getPageSize(), page.getPageSize() * page.getPageNumber());
     }
 
     public Comment getComment(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException(Comment.class, commentId));
     }
+
     public Comment createComment(Comment comment) {
         if (comment.getId() != null) {
             throw new IllegalArgumentException("The new comment id must be null");
@@ -36,11 +37,11 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public Comment updateComment(Comment comment, User user) {
+    public Comment updateComment(Comment comment, Long userId) {
         if (comment.getId() == null) {
             throw new IllegalArgumentException("An existing comment's id must not be null");
         }
-        checkWhetherCommentCanBeChanged(comment.getId(), user.getId());
+        checkWhetherCommentCanBeChanged(comment.getId(), userId);
         return commentRepository.save(comment);
     }
 

@@ -25,6 +25,9 @@ public abstract class AbstractApplicationTest {
 
     @BeforeMethod
     protected void setUp() {
+        jdbcTemplate.update("truncate task cascade;");
+        jdbcTemplate.update("truncate users cascade;");
+        jdbcTemplate.update("truncate comment cascade;");
     }
 
     @AfterSuite
