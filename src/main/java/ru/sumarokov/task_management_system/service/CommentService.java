@@ -29,14 +29,18 @@ public class CommentService {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException(Comment.class, commentId));
     }
-
-    public Comment saveComment(Comment comment, User user) {
+    public Comment createComment(Comment comment) {
         if (comment.getId() != null) {
-            checkWhetherCommentCanBeChanged(comment.getId(), user.getId());
+            throw new IllegalArgumentException("The new comment id must be null");
         }
-        else {
-            comment.setAuthor(user);
+        return commentRepository.save(comment);
+    }
+
+    public Comment updateComment(Comment comment, User user) {
+        if (comment.getId() == null) {
+            throw new IllegalArgumentException("An existing comment's id must not be null");
         }
+        checkWhetherCommentCanBeChanged(comment.getId(), user.getId());
         return commentRepository.save(comment);
     }
 
@@ -49,7 +53,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException(Comment.class, commentId));
         if (!comment.getAuthor().getId().equals(userId)) {
-            throw new AccessDeniedException("Нельзя редактировать/удалять чужие комментарии");
+            throw new AccessDeniedException("You cannot edit/delete other people's comments");
         }
     }
 }

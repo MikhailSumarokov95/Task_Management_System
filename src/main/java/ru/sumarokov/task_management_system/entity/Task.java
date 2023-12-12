@@ -17,10 +17,10 @@ public class Task {
     private Status status;
     @Enumerated(EnumType.STRING)
     private Priority priority;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "executor_id", nullable = false)
     private User executor;
 

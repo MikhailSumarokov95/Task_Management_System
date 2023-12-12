@@ -38,30 +38,15 @@ public class TaskController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Get all tasks", tags = "task")
+    @Operation(summary = "Receive a task with a filter by author or performer using pagination " +
+            "(if the wound filter parameters are null, then they will not be used for filtering)", tags = "task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tasks received"),
             @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
     })
-    @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TaskDto>> getAllTasks() {
-        List<TaskDto> tasksDto = taskService.getAllTasks()
-                .stream()
-                .map(TaskDto::toDto)
-                .toList();
-        return ResponseEntity.ok().body(tasksDto);
-    }
-
-    @Operation(summary = "Receive a task with a filter by author or performer using pagination (if the wound filter parameters are null, then they will not be used for filtering)", tags = "task")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tasks received"),
-            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
-            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
-    })
-    @GetMapping(path = "/getTaskWithFilter", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TaskDto>> getAuthorAndExecutorTasks(@RequestParam(required = false, value = "authorId") Long authorId,
                                                                    @RequestParam(required = false, value = "executorId") Long executorId,
                                                                    @RequestParam(value = "page") Integer page,
@@ -97,7 +82,9 @@ public class TaskController {
     public ResponseEntity<TaskDto> createTask(Principal principal,
                                               @RequestBody @Valid TaskDto taskDto) {
         User user = userService.getUser(principal);
-        Task taskCreated = taskService.saveTask(taskDto.toEntity(), user);
+        Task task = taskDto.toEntity();
+        task.setAuthor(user);
+        Task taskCreated = taskService.createTask(task);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path(String.format("/task/%d", taskCreated.getId()))
@@ -116,7 +103,7 @@ public class TaskController {
     public ResponseEntity<TaskDto> updateTask(Principal principal,
                                               @RequestBody @Valid TaskDto taskDto) {
         User user = userService.getUser(principal);
-        Task taskUpdated = taskService.saveTask(taskDto.toEntity(), user);
+        Task taskUpdated = taskService.updateTask(taskDto.toEntity(), user.getId());
         return ResponseEntity.accepted().body(TaskDto.toDto(taskUpdated));
     }
 

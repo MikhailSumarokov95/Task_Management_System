@@ -14,5 +14,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             "WHERE (:authorId is null or author_id = :authorId) AND " +
             "(:executorId is null or executor_id = :executorId)",
             nativeQuery = true)
-    List<Task> findByExecutorIdAndExecutorId(Long authorId, Long executorId, PageRequest pageRequest);
+    List<Task> findByAuthorIdAndExecutorId(Long authorId, Long executorId, PageRequest pageRequest);
 }

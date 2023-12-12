@@ -25,10 +25,10 @@ public class SwaggerConfiguration {
                         addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes
                         ("Bearer Authentication", createAPIKeyScheme()))
-                .info(new Info().title("My REST API")
-                        .description("Some custom description of API.")
-                        .version("1.0").contact(new Contact().name("Sallo Szrajbman")
-                                .email( "www.baeldung.com").url("salloszraj@gmail.com"))
+                .info(new Info().title("Task manager")
+                        .description("Task manager of API.")
+                        .version("1.0").contact(new Contact().name("Sumarokov Mikhail")
+                                .email("ykpon199528@gmail.com"))
                         .license(new License().name("License of API")
                                 .url("API license URL")));
     }

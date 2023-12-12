@@ -69,7 +69,7 @@ public class CommentController {
 
     @Operation(summary = "Create comment", tags = "comment")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comments created"),
+            @ApiResponse(responseCode = "201", description = "Comments created"),
             @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found")
@@ -78,7 +78,9 @@ public class CommentController {
     public ResponseEntity<CommentDto> createComment(Principal principal,
                                                     @RequestBody @Valid CommentDto commentDto) {
         User user = userService.getUser(principal);
-        Comment commentCreated = commentService.saveComment(commentDto.toEntity(), user);
+        Comment comment = commentDto.toEntity();
+        comment.setAuthor(user);
+        Comment commentCreated = commentService.createComment(comment);
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path(String.format("/comment/%d", commentCreated.getId()))
@@ -97,7 +99,7 @@ public class CommentController {
     public ResponseEntity<CommentDto> updateComment(Principal principal,
                                                     @RequestBody @Valid CommentDto commentDto) {
         User user = userService.getUser(principal);
-        Comment commentUpdated = commentService.saveComment(commentDto.toEntity(), user);
+        Comment commentUpdated = commentService.updateComment(commentDto.toEntity(), user);
         return ResponseEntity.accepted().body(CommentDto.toDto(commentUpdated));
     }
 

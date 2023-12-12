@@ -25,12 +25,8 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
-    }
-
     public List<Task> getTasks(Long authorId, Long executorId, PageRequest pageRequest ) {
-        return taskRepository.findByExecutorIdAndExecutorId(authorId, executorId, pageRequest);
+        return taskRepository.findByAuthorIdAndExecutorId(authorId, executorId, pageRequest);
     }
 
     public Task getTask(Long taskId) {
@@ -38,12 +34,18 @@ public class TaskService {
                 .orElseThrow(() -> new EntityNotFoundException(Task.class, taskId));
     }
 
-    public Task saveTask(Task task, User user) {
+    public Task createTask(Task task) {
         if (task.getId() != null) {
-            checkWhetherTaskCanBeChanged(task.getId(), user.getId());
-        } else {
-            task.setAuthor(user);
+            throw new IllegalArgumentException("The new comment id must be null");
         }
+        return taskRepository.save(task);
+    }
+
+    public Task updateTask(Task task, Long userId) {
+        if (task.getId() == null) {
+            throw new IllegalArgumentException("An existing comment's id must not be null");
+        }
+        checkWhetherTaskCanBeChanged(task.getId(), userId);
         return taskRepository.save(task);
     }
 
@@ -56,7 +58,7 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException(Task.class, taskId));
         if (!task.getAuthor().getId().equals(userId)) {
-            throw new AccessDeniedException("Назначать исполнителя может только автор задачи");
+            throw new AccessDeniedException("Only the task author can assign an executor");
         }
         User executor = userRepository.findById(executorId)
                 .orElseThrow(() -> new EntityNotFoundException(User.class, taskId));
@@ -68,7 +70,7 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException(Task.class, taskId));
         if (!task.getExecutor().getId().equals(userId)) {
-            throw new AccessDeniedException("Только исполнитель задачи может менять её статус");
+            throw new AccessDeniedException("Only the performer of a task can change its status");
         }
         task.setStatus(status);
         return taskRepository.save(task);
@@ -78,7 +80,7 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException(Task.class, taskId));
         if (!task.getAuthor().getId().equals(userId)) {
-            throw new AccessDeniedException("Нельзя редактировать/удалять чужие задачи");
+            throw new AccessDeniedException("You cannot edit/delete other people's tasks");
         }
     }
 }

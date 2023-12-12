@@ -30,15 +30,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
-    public void createNewUser(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
     public User getUser(Principal principal) {
         return userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(User.class, principal.getName()));

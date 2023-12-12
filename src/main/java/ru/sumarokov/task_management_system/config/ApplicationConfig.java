@@ -15,22 +15,16 @@ import ru.sumarokov.task_management_system.repository.UserRepository;
 @Configuration
 public class ApplicationConfig {
 
-    private final UserRepository userRepository;
-
-    public ApplicationConfig(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Bean
-    public UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
         return username -> userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
