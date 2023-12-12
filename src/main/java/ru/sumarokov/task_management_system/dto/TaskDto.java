@@ -97,7 +97,10 @@ public class TaskDto {
     }
 
     public Task toEntity() {
-        return new Task(id, title, description, status, priority, authorDto.toEntity(), executorDto.toEntity());
+        return new Task(id, title, description, status, priority, authorDto.toEntity(),
+                executorDto == null
+                        ? null
+                        : executorDto.toEntity());
     }
 
     public static TaskDto toDto(Task task) {
@@ -107,6 +110,8 @@ public class TaskDto {
                 task.getStatus(),
                 task.getPriority(),
                 UserDto.toDto(task.getAuthor()),
-                UserDto.toDto(task.getExecutor()));
+                task.getExecutor() == null
+                        ? null
+                        : UserDto.toDto(task.getExecutor()));
     }
 }

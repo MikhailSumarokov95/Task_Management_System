@@ -36,14 +36,14 @@ public class TaskService {
 
     public Task createTask(Task task) {
         if (task.getId() != null) {
-            throw new IllegalArgumentException("The new comment id must be null");
+            throw new IllegalArgumentException("The new task id must be null");
         }
         return taskRepository.save(task);
     }
 
     public Task updateTask(Task task, Long userId) {
         if (task.getId() == null) {
-            throw new IllegalArgumentException("An existing comment's id must not be null");
+            throw new IllegalArgumentException("An existing task's id must not be null");
         }
         checkWhetherTaskCanBeChanged(task.getId(), userId);
         return taskRepository.save(task);
